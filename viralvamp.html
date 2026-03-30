@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viral Vamp — Ecommerce Accelerator</title>
+<style>
+  /* ─── RESET & ROOT ─────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy:    #020750;
+    --navy2:   #040a6e;
+    --blue:    #0466c8;
+    --blue2:   #0582ef;
+    --blue3:   #38a3f5;
+    --white:   #ffffff;
+    --offwhite:#f0f4ff;
+    --text:    #c8d8f8;
+    --gold:    #e8b84b;
+    --grad:    linear-gradient(135deg, var(--navy) 0%, #041080 50%, #0a2aaa 100%);
+    --grad2:   linear-gradient(135deg, var(--blue) 0%, var(--blue2) 60%, var(--blue3) 100%);
+    --grad3:   linear-gradient(180deg, var(--navy) 0%, #030966 100%);
+    --shadow:  0 20px 60px rgba(4,102,200,0.35);
+    --shadow2: 0 8px 32px rgba(2,7,80,0.6);
+    --radius:  16px;
+    --font-display: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --font-body:    Georgia, 'Times New Roman', serif;
+  }
+
+  html { scroll-behavior: smooth; overflow-x: hidden; }
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: var(--font-display);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── SCROLLBAR ─────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--navy); }
+  ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 3px; }
+
+  /* ─── UTILITY ───────────────────────────────────────────── */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+  .tag {
+    display: inline-block;
+    background: rgba(4,102,200,0.18);
+    border: 1px solid rgba(4,102,200,0.45);
+    color: var(--blue3);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 0.35rem 1rem;
+    border-radius: 50px;
+    margin-bottom: 1.2rem;
+  }
+  .section-title {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+  .section-title span { background: var(--grad2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .section-lead {
+    font-size: 1.08rem;
+    color: var(--text);
+    max-width: 560px;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 2.2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s;
+    border: none;
+  }
+  .btn-primary {
+    background: var(--grad2);
+    color: #fff;
+    box-shadow: 0 8px 28px rgba(4,102,200,0.5);
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(4,102,200,0.65); }
+  .btn-outline {
+    background: transparent;
+    color: var(--white);
+    border: 2px solid rgba(255,255,255,0.35);
+  }
+  .btn-outline:hover { border-color: var(--blue2); color: var(--blue2); transform: translateY(-3px); }
+  .divider {
+    width: 64px;
+    height: 4px;
+    background: var(--grad2);
+    border-radius: 2px;
+    margin-bottom: 1.6rem;
+  }
+
+  /* ─── SCROLL ANIMATION BASE ─────────────────────────────── */
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.75s ease, transform 0.75s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-left { opacity: 0; transform: translateX(-50px); transition: opacity 0.75s ease, transform 0.75s ease; }
+  .reveal-left.visible { opacity: 1; transform: translateX(0); }
+  .reveal-right { opacity: 0; transform: translateX(50px); transition: opacity 0.75s ease, transform 0.75s ease; }
+  .reveal-right.visible { opacity: 1; transform: translateX(0); }
+  .reveal-scale { opacity: 0; transform: scale(0.88); transition: opacity 0.65s ease, transform 0.65s ease; }
+  .reveal-scale.visible { opacity: 1; transform: scale(1); }
+
+  /* ─── NAV ────────────────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 1.1rem 0;
+    transition: background 0.4s, backdrop-filter 0.4s, box-shadow 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(2,7,80,0.88);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 2px 24px rgba(2,7,80,0.5);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  .logo {
+    font-size: 1.55rem;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    text-decoration: none;
+    color: var(--white);
+    position: relative;
+  }
+  .logo span { background: var(--grad2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .logo::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0; right: 0;
+    height: 2px;
+    background: var(--grad2);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    transform-origin: left;
+  }
+  .logo:hover::after { transform: scaleX(1); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+  .nav-links a {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: color 0.25s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0; right: 0;
+    height: 2px; background: var(--blue2);
+    transform: scaleX(0); transition: transform 0.3s; transform-origin: left;
+  }
+  .nav-links a:hover { color: #fff; }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-cta { padding: 0.55rem 1.4rem; font-size: 0.82rem; }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+  .hamburger span { display: block; width: 26px; height: 2px; background: var(--white); transition: 0.3s; border-radius: 2px; }
+
+  /* ─── HERO ───────────────────────────────────────────────── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding-top: 6rem;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: var(--grad);
+    z-index: 0;
+  }
+  .hero-mesh {
+    position: absolute; inset: 0; z-index: 1;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 40%, rgba(4,102,200,0.35) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 40% at 10% 80%, rgba(4,102,200,0.2) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 50% at 90% 10%, rgba(56,163,245,0.18) 0%, transparent 55%);
+    animation: meshPulse 8s ease-in-out infinite alternate;
+  }
+  @keyframes meshPulse {
+    0%  { opacity: 0.7; }
+    100%{ opacity: 1;   }
+  }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 1;
+    background-image:
+      linear-gradient(rgba(4,102,200,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(4,102,200,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridMove 20s linear infinite;
+  }
+  @keyframes gridMove { to { background-position: 60px 60px; } }
+  .hero-particles {
+    position: absolute; inset: 0; z-index: 2;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(4,102,200,0.45);
+    animation: float linear infinite;
+  }
+  @keyframes float {
+    0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 0.6; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+  }
+  .hero-content { position: relative; z-index: 3; }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.6rem;
+    animation: fadeSlideUp 0.8s ease both;
+  }
+  .hero-eyebrow-line {
+    width: 40px; height: 2px;
+    background: var(--grad2);
+    flex-shrink: 0;
+  }
+  .hero-eyebrow span {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--blue3);
+  }
+  .hero-headline {
+    font-size: clamp(2.8rem, 5.5vw, 5rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1.08;
+    margin-bottom: 1.6rem;
+    animation: fadeSlideUp 0.9s 0.1s ease both;
+  }
+  .hero-headline .accent {
+    background: var(--grad2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--text);
+    max-width: 500px;
+    line-height: 1.85;
+    margin-bottom: 2.4rem;
+    animation: fadeSlideUp 1s 0.2s ease both;
+  }
+  .hero-cta-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    animation: fadeSlideUp 1s 0.3s ease both;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    margin-top: 3.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    animation: fadeSlideUp 1s 0.45s ease both;
+  }
+  .hero-stat-num {
+    font-size: 2.2rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    background: var(--grad2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+  }
+  .hero-stat-label {
+    font-size: 0.78rem;
+    color: rgba(200,216,248,0.7);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  /* Hero right side: animated graphic */
+  .hero-visual {
+    position: relative;
+    animation: fadeSlideUp 1s 0.2s ease both;
+  }
+  .hero-orbit {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .orbit-ring {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(4,102,200,0.25);
+    animation: spinOrbit linear infinite;
+  }
+  .orbit-ring:nth-child(1) { inset: 5%;  animation-duration: 16s; }
+  .orbit-ring:nth-child(2) { inset: 18%; animation-duration: 24s; animation-direction: reverse; }
+  .orbit-ring:nth-child(3) { inset: 31%; animation-duration: 12s; }
+  @keyframes spinOrbit { to { transform: rotate(360deg); } }
+  .orbit-dot {
+    position: absolute;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--blue2);
+    box-shadow: 0 0 16px var(--blue2);
+    top: -6px;
+    left: calc(50% - 6px);
+  }
+  .orbit-planet {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 38%;
+    aspect-ratio: 1;
+    background: var(--grad2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: white;
+    box-shadow: 0 0 60px rgba(4,102,200,0.6), 0 0 120px rgba(4,102,200,0.25);
+    animation: pulsePlanet 3s ease-in-out infinite;
+    letter-spacing: -0.04em;
+  }
+  @keyframes pulsePlanet {
+    0%, 100% { box-shadow: 0 0 60px rgba(4,102,200,0.6), 0 0 120px rgba(4,102,200,0.25); }
+    50%       { box-shadow: 0 0 80px rgba(4,102,200,0.8), 0 0 160px rgba(4,102,200,0.4); }
+  }
+  .platform-badges {
+    position: absolute;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 0.65rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--white);
+    display: flex; align-items: center; gap: 0.5rem;
+    animation: badgeFloat 4s ease-in-out infinite;
+    white-space: nowrap;
+  }
+  .badge-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .badge-amazon { top: 8%; right: -4%; animation-delay: 0s; }
+  .badge-tiktok { bottom: 22%; right: -8%; animation-delay: 1.3s; }
+  .badge-walmart { bottom: 5%; left: 0%; animation-delay: 0.7s; }
+  @keyframes badgeFloat {
+    0%, 100% { transform: translateY(0);   }
+    50%       { transform: translateY(-8px); }
+  }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0);    }
+  }
+
+  /* ─── TICKER ─────────────────────────────────────────────── */
+  .ticker-wrap {
+    background: var(--grad2);
+    padding: 0.85rem 0;
+    overflow: hidden;
+    position: relative;
+    z-index: 5;
+  }
+  .ticker-inner {
+    display: flex;
+    gap: 0;
+    width: max-content;
+    animation: tickerScroll 28s linear infinite;
+  }
+  .ticker-inner:hover { animation-play-state: paused; }
+  @keyframes tickerScroll { to { transform: translateX(-50%); } }
+  .ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0 2.5rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.92);
+    white-space: nowrap;
+  }
+  .ticker-sep { color: rgba(255,255,255,0.4); font-size: 1.1rem; }
+
+  /* ─── ABOUT ──────────────────────────────────────────────── */
+  #about {
+    padding: 8rem 0;
+    position: relative;
+    background: var(--grad3);
+    overflow: hidden;
+  }
+  #about::before {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(4,102,200,0.14) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  #about::after {
+    content: '';
+    position: absolute;
+    bottom: -200px; left: -100px;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(4,102,200,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+  .about-image-wrap {
+    position: relative;
+  }
+  .about-img {
+    width: 100%;
+    aspect-ratio: 4/5;
+    object-fit: cover;
+    border-radius: var(--radius);
+    display: block;
+    background: linear-gradient(135deg, #041080, #0466c8);
+  }
+  .about-img-placeholder {
+    width: 100%;
+    aspect-ratio: 4/5;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, #041080 0%, #0a2aaa 50%, #0466c8 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 2px dashed rgba(4,102,200,0.4);
+  }
+  .about-img-placeholder svg { width: 56px; opacity: 0.3; }
+  .about-img-badge {
+    position: absolute;
+    bottom: -20px; right: -20px;
+    background: var(--grad2);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.8rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .badge-num {
+    font-size: 2.4rem;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    display: block;
+    color: #fff;
+  }
+  .badge-lbl {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.75);
+  }
+  .about-deco {
+    position: absolute;
+    top: -20px; left: -20px;
+    width: 120px; height: 120px;
+    border: 2px solid rgba(4,102,200,0.25);
+    border-radius: var(--radius);
+    z-index: -1;
+  }
+  .about-text .section-lead { margin-bottom: 2rem; }
+  .about-pillars {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .pillar {
+    background: rgba(4,102,200,0.1);
+    border: 1px solid rgba(4,102,200,0.22);
+    border-radius: 12px;
+    padding: 1.1rem 1.3rem;
+    transition: background 0.3s, border-color 0.3s, transform 0.3s;
+  }
+  .pillar:hover {
+    background: rgba(4,102,200,0.18);
+    border-color: rgba(4,102,200,0.5);
+    transform: translateY(-4px);
+  }
+  .pillar-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .pillar-title {
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.25rem;
+    color: var(--white);
+  }
+  .pillar-desc {
+    font-size: 0.76rem;
+    color: var(--text);
+    line-height: 1.55;
+  }
+
+  /* ─── DIVISIONS ──────────────────────────────────────────── */
+  #divisions {
+    padding: 8rem 0;
+    position: relative;
+    overflow: hidden;
+    background: var(--navy);
+  }
+  .divisions-header { text-align: center; margin-bottom: 4.5rem; }
+  .divisions-header .section-lead { max-width: 600px; margin: 0 auto 2rem; }
+  .divisions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.8rem;
+  }
+  .division-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(4,102,200,0.06) 100%);
+    border: 1px solid rgba(4,102,200,0.2);
+    border-radius: 20px;
+    padding: 2.4rem 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.35s, border-color 0.35s, box-shadow 0.35s;
+    cursor: default;
+  }
+  .division-card:nth-child(3) { grid-column: 1 / 2; }
+  .division-card:nth-child(4) { grid-column: 2 / 3; }
+  .division-card:nth-child(5) { grid-column: 3 / 4; }
+  .division-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--grad2);
+    transform: scaleX(0);
+    transition: transform 0.35s;
+    transform-origin: left;
+  }
+  .division-card:hover::before { transform: scaleX(1); }
+  .division-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(4,102,200,0.45);
+    box-shadow: 0 24px 64px rgba(4,102,200,0.25);
+  }
+  .division-card-glow {
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(4,102,200,0.18) 0%, transparent 70%);
+    pointer-events: none;
+    transition: opacity 0.35s;
+    opacity: 0;
+  }
+  .division-card:hover .division-card-glow { opacity: 1; }
+  .division-num {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    color: var(--blue3);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .division-num::after {
+    content: '';
+    flex: 1; max-width: 40px;
+    height: 1px;
+    background: rgba(4,102,200,0.4);
+  }
+  .division-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(4,102,200,0.3), rgba(4,102,200,0.1));
+    border: 1px solid rgba(4,102,200,0.35);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+    margin-bottom: 1.4rem;
+    transition: background 0.3s;
+  }
+  .division-card:hover .division-icon {
+    background: linear-gradient(135deg, rgba(4,102,200,0.5), rgba(4,102,200,0.25));
+  }
+  .division-name {
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.8rem;
+    color: var(--white);
+  }
+  .division-desc {
+    font-size: 0.88rem;
+    color: var(--text);
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+  }
+  .division-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue3);
+    padding: 0.3rem 0.9rem;
+    background: rgba(4,102,200,0.12);
+    border-radius: 50px;
+    border: 1px solid rgba(4,102,200,0.25);
+  }
+
+  /* ─── PLATFORMS ──────────────────────────────────────────── */
+  #platforms {
+    padding: 8rem 0;
+    background: linear-gradient(180deg, #030966 0%, #020750 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .platforms-glow {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 900px; height: 400px;
+    background: radial-gradient(ellipse, rgba(4,102,200,0.2) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .platforms-header { text-align: center; margin-bottom: 4rem; }
+  .platform-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+  }
+  .platform-card {
+    border-radius: 24px;
+    padding: 3rem 2.2rem;
+    text-align: center;
+    border: 1px solid rgba(4,102,200,0.22);
+    background: rgba(255,255,255,0.03);
+    transition: transform 0.35s, box-shadow 0.35s;
+    position: relative;
+    overflow: hidden;
+  }
+  .platform-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 40% at 50% 100%, rgba(4,102,200,0.18) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.35s;
+  }
+  .platform-card:hover { transform: translateY(-10px); box-shadow: 0 28px 80px rgba(4,102,200,0.3); }
+  .platform-card:hover::after { opacity: 1; }
+  .platform-emoji {
+    font-size: 3.5rem;
+    display: block;
+    margin-bottom: 1.2rem;
+    filter: drop-shadow(0 4px 16px rgba(4,102,200,0.5));
+  }
+  .platform-name {
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.6rem;
+  }
+  .platform-sub {
+    font-size: 0.85rem;
+    color: var(--text);
+    margin-bottom: 1.8rem;
+    line-height: 1.65;
+  }
+  .platform-metric {
+    background: rgba(4,102,200,0.15);
+    border: 1px solid rgba(4,102,200,0.3);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    display: inline-block;
+  }
+  .platform-metric strong {
+    font-size: 1.65rem;
+    font-weight: 900;
+    background: var(--grad2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+    letter-spacing: -0.03em;
+  }
+  .platform-metric span { font-size: 0.72rem; color: var(--text); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* ─── WHY US ──────────────────────────────────────────────── */
+  #why {
+    padding: 8rem 0;
+    background: var(--navy);
+    position: relative;
+    overflow: hidden;
+  }
+  #why::before {
+    content: 'VV';
+    position: absolute;
+    right: -4rem; top: 50%;
+    transform: translateY(-50%);
+    font-size: 30vw;
+    font-weight: 900;
+    color: rgba(4,102,200,0.03);
+    letter-spacing: -0.08em;
+    pointer-events: none;
+    user-select: none;
+  }
+  .why-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+  .why-left .section-lead { margin-bottom: 2.5rem; }
+  .why-features { display: flex; flex-direction: column; gap: 1.5rem; }
+  .why-feature {
+    display: flex;
+    gap: 1.4rem;
+    align-items: flex-start;
+    padding: 1.4rem;
+    border-radius: 14px;
+    border: 1px solid rgba(4,102,200,0.15);
+    background: rgba(4,102,200,0.05);
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .why-feature:hover { transform: translateX(8px); border-color: rgba(4,102,200,0.4); }
+  .why-feature-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    background: var(--grad2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    box-shadow: 0 6px 20px rgba(4,102,200,0.4);
+  }
+  .why-feature-body h4 { font-size: 1rem; font-weight: 800; margin-bottom: 0.35rem; }
+  .why-feature-body p  { font-size: 0.85rem; color: var(--text); line-height: 1.65; }
+  .why-right {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+  }
+  .why-stat-card {
+    background: linear-gradient(145deg, rgba(4,102,200,0.15), rgba(4,102,200,0.05));
+    border: 1px solid rgba(4,102,200,0.25);
+    border-radius: 18px;
+    padding: 2rem 1.6rem;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .why-stat-card:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
+  .why-stat-card:first-child { grid-column: 1 / -1; }
+  .stat-big {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    background: var(--grad2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--text);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  /* ─── FOUNDER ─────────────────────────────────────────────── */
+  #founder {
+    padding: 8rem 0;
+    background: linear-gradient(180deg, #030966 0%, #020e82 50%, var(--navy) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  #founder::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      linear-gradient(rgba(4,102,200,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(4,102,200,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none;
+  }
+  .founder-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+  .founder-text .section-lead { margin-bottom: 1.6rem; }
+  .founder-quote {
+    position: relative;
+    padding: 1.8rem 2rem;
+    background: rgba(4,102,200,0.1);
+    border-left: 4px solid var(--blue2);
+    border-radius: 0 12px 12px 0;
+    margin: 1.6rem 0 2rem;
+    font-size: 1.05rem;
+    font-style: italic;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.75;
+  }
+  .founder-quote::before {
+    content: '\201C';
+    position: absolute;
+    top: -0.5rem; left: 1.2rem;
+    font-size: 4rem;
+    color: var(--blue2);
+    opacity: 0.35;
+    font-style: normal;
+    line-height: 1;
+  }
+  .founder-sig {
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+    margin-top: 2rem;
+  }
+  .founder-sig-line { width: 48px; height: 2px; background: var(--grad2); }
+  .founder-sig-name { font-weight: 900; font-size: 1.05rem; letter-spacing: -0.01em; }
+  .founder-sig-title { font-size: 0.8rem; color: var(--text); letter-spacing: 0.06em; }
+  .founder-image-wrap { position: relative; }
+  .founder-img-placeholder {
+    width: 100%;
+    aspect-ratio: 4/5;
+    max-width: 420px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    border-radius: 24px;
+    background: linear-gradient(145deg, #041080 0%, #0a2aaa 40%, #0466c8 100%);
+    border: 2px dashed rgba(56,163,245,0.35);
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.45);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .founder-img-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(56,163,245,0.2) 0%, transparent 60%);
+  }
+  .founder-img-placeholder svg { width: 60px; opacity: 0.25; position: relative; z-index: 1; }
+  .founder-img-placeholder span { position: relative; z-index: 1; }
+  .founder-deco-ring {
+    position: absolute;
+    bottom: -30px; left: -30px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    border: 2px solid rgba(4,102,200,0.3);
+    z-index: -1;
+  }
+  .founder-badge {
+    position: absolute;
+    top: 2rem; left: -2rem;
+    background: var(--grad2);
+    border-radius: 14px;
+    padding: 1rem 1.3rem;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .founder-badge strong { font-size: 1.4rem; font-weight: 900; display: block; color: #fff; }
+  .founder-badge span  { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.75); }
+
+  /* ─── CTA ─────────────────────────────────────────────────── */
+  #cta {
+    padding: 8rem 0;
+    background: var(--navy);
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(4,102,200,0.18) 0%, rgba(2,7,80,0) 60%);
+  }
+  .cta-inner {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .cta-inner .section-title { font-size: clamp(2.4rem, 4.5vw, 3.8rem); margin-bottom: 1.4rem; }
+  .cta-inner .section-lead { max-width: 100%; margin: 0 auto 2.5rem; text-align: center; }
+  .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .cta-glow {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse, rgba(4,102,200,0.25) 0%, transparent 70%);
+    pointer-events: none;
+    animation: ctaGlowPulse 4s ease-in-out infinite;
+  }
+  @keyframes ctaGlowPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+    50%       { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  }
+
+  /* ─── FOOTER ─────────────────────────────────────────────── */
+  footer {
+    background: #010438;
+    padding: 5rem 0 2.5rem;
+    border-top: 1px solid rgba(4,102,200,0.18);
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem;
+    margin-bottom: 4rem;
+  }
+  .footer-brand .logo { font-size: 1.6rem; display: inline-block; margin-bottom: 1rem; }
+  .footer-tagline {
+    font-size: 0.85rem;
+    color: rgba(200,216,248,0.55);
+    line-height: 1.75;
+    max-width: 280px;
+    margin-bottom: 1.5rem;
+  }
+  .footer-socials { display: flex; gap: 0.8rem; }
+  .social-btn {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: rgba(4,102,200,0.15);
+    border: 1px solid rgba(4,102,200,0.25);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background 0.25s, border-color 0.25s, transform 0.25s;
+  }
+  .social-btn:hover { background: rgba(4,102,200,0.35); border-color: rgba(4,102,200,0.6); transform: translateY(-3px); }
+  .footer-col h4 {
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 1.2rem;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; }
+  .footer-col ul li a {
+    font-size: 0.85rem;
+    color: rgba(200,216,248,0.55);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-col ul li a:hover { color: var(--white); }
+  .footer-bottom {
+    border-top: 1px solid rgba(4,102,200,0.15);
+    padding-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-bottom p { font-size: 0.8rem; color: rgba(200,216,248,0.35); }
+
+  /* ─── MOBILE MENU ────────────────────────────────────────── */
+  @media (max-width: 860px) {
+    .hamburger { display: flex; }
+    .nav-links {
+      position: fixed;
+      top: 0; right: -100%; bottom: 0;
+      width: min(320px, 90vw);
+      background: rgba(2,7,80,0.97);
+      backdrop-filter: blur(24px);
+      flex-direction: column;
+      padding: 6rem 2rem 2rem;
+      align-items: flex-start;
+      transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 999;
+      border-left: 1px solid rgba(4,102,200,0.2);
+    }
+    .nav-links.open { right: 0; }
+    .nav-links a { font-size: 1.1rem; padding: 0.6rem 0; }
+    .nav-cta { display: inline-flex; }
+  }
+
+  /* ─── RESPONSIVE ─────────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .divisions-grid { grid-template-columns: repeat(2, 1fr); }
+    .division-card:nth-child(n) { grid-column: auto; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+  }
+  @media (max-width: 768px) {
+    .hero-inner, .about-grid, .founder-grid, .why-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .hero-visual { display: none; }
+    .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
+    .platform-cards { grid-template-columns: 1fr; }
+    .divisions-grid { grid-template-columns: 1fr; }
+    .about-pillars { grid-template-columns: 1fr; }
+    .why-right { grid-template-columns: 1fr; }
+    .why-stat-card:first-child { grid-column: 1; }
+    .founder-grid { direction: ltr; }
+    .founder-image-wrap { order: -1; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+  }
+  @media (max-width: 480px) {
+    .hero-cta-row { flex-direction: column; align-items: flex-start; }
+    .cta-buttons { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─────────────────────────────────────────────────── -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="#" class="logo">Viral <span>Vamp</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about">About</a></li>
+      <li><a href="#divisions">Divisions</a></li>
+      <li><a href="#platforms">Platforms</a></li>
+      <li><a href="#founder">Founder</a></li>
+      <li><a href="#cta" class="btn btn-primary nav-cta">Get Started</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── HERO ──────────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-particles" id="particles"></div>
+  <div class="hero-content" style="width:100%">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-eyebrow">
+          <div class="hero-eyebrow-line"></div>
+          <span>Ecommerce Accelerator &amp; Parent Company</span>
+        </div>
+        <h1 class="hero-headline">
+          We Build<br><span class="accent">Ecommerce</span><br>Empires.
+        </h1>
+        <p class="hero-sub">
+          Viral Vamp is a full-spectrum ecommerce accelerator operating five elite divisions across Amazon, TikTok Shop, and Walmart — built to scale brands from growth to dominance.
+        </p>
+        <div class="hero-cta-row">
+          <a href="#divisions" class="btn btn-primary">Explore Our Divisions ↓</a>
+          <a href="#founder" class="btn btn-outline">Meet the Founder</a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <span class="hero-stat-num">5</span>
+            <span class="hero-stat-label">Core Divisions</span>
+          </div>
+          <div>
+            <span class="hero-stat-num">3</span>
+            <span class="hero-stat-label">Major Platforms</span>
+          </div>
+          <div>
+            <span class="hero-stat-num">360°</span>
+            <span class="hero-stat-label">Ecommerce Coverage</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-orbit">
+          <div class="orbit-ring"><div class="orbit-dot"></div></div>
+          <div class="orbit-ring"><div class="orbit-dot"></div></div>
+          <div class="orbit-ring"><div class="orbit-dot"></div></div>
+          <div class="orbit-planet">VV</div>
+        </div>
+        <div class="platform-badges badge-amazon">
+          <span class="badge-dot" style="background:#f90;"></span> Amazon
+        </div>
+        <div class="platform-badges badge-tiktok">
+          <span class="badge-dot" style="background:#ff2d55;"></span> TikTok Shop
+        </div>
+        <div class="platform-badges badge-walmart">
+          <span class="badge-dot" style="background:#0072ce;"></span> Walmart
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TICKER ─────────────────────────────────────────────────── -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-inner" id="ticker">
+    <span class="ticker-item">🚀 Distribution Excellence <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🎯 Proprietary Sourcing <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🛒 Amazon Marketplace <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">📦 3PL Logistics <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">📱 TikTok Shop Growth <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🏷️ Brand Management <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🤝 VA Placement Services <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🛍️ Walmart Commerce <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">⚡ Ecommerce Acceleration <span class="ticker-sep">·</span></span>
+    <!-- duplicate for seamless loop -->
+    <span class="ticker-item">🚀 Distribution Excellence <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🎯 Proprietary Sourcing <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🛒 Amazon Marketplace <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">📦 3PL Logistics <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">📱 TikTok Shop Growth <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🏷️ Brand Management <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🤝 VA Placement Services <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🛍️ Walmart Commerce <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">⚡ Ecommerce Acceleration <span class="ticker-sep">·</span></span>
+  </div>
+</div>
+
+<!-- ─── ABOUT ──────────────────────────────────────────────────── -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-image-wrap reveal-left">
+        <div class="about-img-placeholder">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="64" height="64" rx="8" fill="rgba(4,102,200,0.2)"/>
+            <circle cx="32" cy="22" r="10" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+            <path d="M12 52c0-11 9-18 20-18s20 7 20 18" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+          </svg>
+          <span>Replace with<br>company image</span>
+        </div>
+        <div class="about-img-badge">
+          <span class="badge-num">5</span>
+          <span class="badge-lbl">Powerhouse<br>Divisions</span>
+        </div>
+        <div class="about-deco"></div>
+      </div>
+      <div class="about-text reveal-right">
+        <div class="tag">Who We Are</div>
+        <h2 class="section-title">The Engine Behind<br><span>Ecommerce Success</span></h2>
+        <div class="divider"></div>
+        <p class="section-lead">
+          Viral Vamp is an ecommerce accelerator and parent company built to give brands, sellers, and operators an unfair advantage. We've engineered a five-division ecosystem that covers every critical pillar of modern ecommerce — from getting products to shelves, to scaling them into household names.
+        </p>
+        <p style="color:var(--text); font-size:0.92rem; line-height:1.85; margin-bottom:2rem;">
+          Our integrated model means our divisions don't just co-exist — they amplify each other. A product sourced through our proprietary method flows through our 3PL, gets amplified by our brand management team, and is fulfilled via our distribution arm — all supported by rigorously placed virtual assistants who keep operations running at peak performance across Amazon, TikTok Shop, and Walmart.
+        </p>
+        <div class="about-pillars">
+          <div class="pillar reveal" style="transition-delay:0.1s">
+            <span class="pillar-icon">🔗</span>
+            <div class="pillar-title">Vertically Integrated</div>
+            <p class="pillar-desc">End-to-end control from sourcing to sale — no cracks in the chain.</p>
+          </div>
+          <div class="pillar reveal" style="transition-delay:0.2s">
+            <span class="pillar-icon">⚡</span>
+            <div class="pillar-title">Proprietary Methods</div>
+            <p class="pillar-desc">Our sourcing intelligence is exclusive, data-driven, and battle-tested.</p>
+          </div>
+          <div class="pillar reveal" style="transition-delay:0.3s">
+            <span class="pillar-icon">🌐</span>
+            <div class="pillar-title">Multi-Platform</div>
+            <p class="pillar-desc">Amazon, TikTok Shop, and Walmart — we operate where buyers are.</p>
+          </div>
+          <div class="pillar reveal" style="transition-delay:0.4s">
+            <span class="pillar-icon">📈</span>
+            <div class="pillar-title">Enterprise Scale</div>
+            <p class="pillar-desc">Infrastructure designed for rapid, sustainable growth.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DIVISIONS ─────────────────────────────────────────────── -->
+<section id="divisions">
+  <div class="container">
+    <div class="divisions-header reveal">
+      <div class="tag">Our Ecosystem</div>
+      <h2 class="section-title">Five Divisions.<br><span>One Unstoppable Force.</span></h2>
+      <p class="section-lead">
+        Each division was purpose-built to solve a specific ecommerce challenge. Together, they form a closed-loop system that leaves no growth opportunity on the table.
+      </p>
+    </div>
+    <div class="divisions-grid">
+
+      <div class="division-card reveal" style="transition-delay:0.05s">
+        <div class="division-card-glow"></div>
+        <div class="division-num">01</div>
+        <div class="division-icon">📦</div>
+        <h3 class="division-name">Distribution Company</h3>
+        <p class="division-desc">
+          Our distribution arm ensures products move swiftly, reliably, and cost-effectively from warehouse to customer doorstep. We leverage carrier partnerships, optimized routing, and real-time tracking to maintain fulfillment standards that protect seller ratings and customer satisfaction across every channel.
+        </p>
+        <span class="division-tag">🚛 Fulfillment &amp; Logistics</span>
+      </div>
+
+      <div class="division-card reveal" style="transition-delay:0.12s">
+        <div class="division-card-glow"></div>
+        <div class="division-num">02</div>
+        <div class="division-icon">🎯</div>
+        <h3 class="division-name">Sourcing Company</h3>
+        <p class="division-desc">
+          Powered by our proprietary sourcing methodology, our sourcing division identifies high-margin, high-demand products before the competition sees them. Our intelligence framework combines trend analytics, supplier vetting, and margin modeling to deliver a consistent pipeline of winning SKUs.
+        </p>
+        <span class="division-tag">🔍 Proprietary Sourcing</span>
+      </div>
+
+      <div class="division-card reveal" style="transition-delay:0.19s">
+        <div class="division-card-glow"></div>
+        <div class="division-num">03</div>
+        <div class="division-icon">🤝</div>
+        <h3 class="division-name">VA Placement Service</h3>
+        <p class="division-desc">
+          Ecommerce businesses run on great people. Our VA placement division rigorously screens, trains, and places specialized virtual assistants across all key ecommerce functions — listing management, customer service, PPC optimization, inventory planning, and more — so your operations never miss a beat.
+        </p>
+        <span class="division-tag">👥 Talent Placement</span>
+      </div>
+
+      <div class="division-card reveal" style="transition-delay:0.26s">
+        <div class="division-card-glow"></div>
+        <div class="division-num">04</div>
+        <div class="division-icon">🏭</div>
+        <h3 class="division-name">Third-Party Logistics (3PL)</h3>
+        <p class="division-desc">
+          Our 3PL division offers scalable warehousing, inventory management, pick-and-pack, kitting, and multi-channel fulfillment. Designed for ecommerce-first operations, we integrate directly with Amazon FBM, Walmart WFS prep, and TikTok Shop fulfillment requirements to keep your supply chain seamless.
+        </p>
+        <span class="division-tag">🏗️ Warehousing &amp; 3PL</span>
+      </div>
+
+      <div class="division-card reveal" style="transition-delay:0.33s">
+        <div class="division-card-glow"></div>
+        <div class="division-num">05</div>
+        <div class="division-icon">🏷️</div>
+        <h3 class="division-name">Brand Management</h3>
+        <p class="division-desc">
+          We don't just sell products — we build brands with lasting equity. Our brand management division oversees positioning, creative assets, storefront optimization, review strategy, and cross-channel brand consistency. We transform sellers into recognizable, trusted names that dominate their categories.
+        </p>
+        <span class="division-tag">🌟 Brand Building</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── PLATFORMS ─────────────────────────────────────────────── -->
+<section id="platforms">
+  <div class="platforms-glow"></div>
+  <div class="container">
+    <div class="platforms-header reveal">
+      <div class="tag">Where We Operate</div>
+      <h2 class="section-title">Dominant Across<br><span>Every Major Platform</span></h2>
+      <p class="section-lead" style="max-width:580px; margin:0 auto;">
+        We've built deep expertise and operational infrastructure across the three platforms generating the most ecommerce revenue today — and tomorrow.
+      </p>
+    </div>
+    <div class="platform-cards">
+      <div class="platform-card reveal" style="transition-delay:0.05s">
+        <span class="platform-emoji">📦</span>
+        <h3 class="platform-name">Amazon</h3>
+        <p class="platform-sub">FBA, FBM, Brand Registry, and PPC mastery. We operate at every level of the world's most competitive marketplace — from listing optimization to A+ content to automated advertising strategy.</p>
+        <div class="platform-metric">
+          <strong>#1</strong>
+          <span>Platform by Revenue</span>
+        </div>
+      </div>
+      <div class="platform-card reveal" style="transition-delay:0.13s">
+        <span class="platform-emoji">📱</span>
+        <h3 class="platform-name">TikTok Shop</h3>
+        <p class="platform-sub">The fastest-growing social commerce platform on the planet. We help brands leverage content-to-purchase funnels, affiliate partnerships, and live shopping to reach the next generation of buyers.</p>
+        <div class="platform-metric">
+          <strong>Fastest</strong>
+          <span>Growing Platform</span>
+        </div>
+      </div>
+      <div class="platform-card reveal" style="transition-delay:0.21s">
+        <span class="platform-emoji">🛒</span>
+        <h3 class="platform-name">Walmart</h3>
+        <p class="platform-sub">The sleeping giant of ecommerce. Our Walmart Marketplace expertise includes WFS (Walmart Fulfillment Services) optimization, Sponsored Products management, and omnichannel brand strategy.</p>
+        <div class="platform-metric">
+          <strong>$100B+</strong>
+          <span>Marketplace GMV</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── WHY US ─────────────────────────────────────────────────── -->
+<section id="why">
+  <div class="container">
+    <div class="why-grid">
+      <div class="why-left">
+        <div class="reveal">
+          <div class="tag">Why Viral Vamp</div>
+          <h2 class="section-title">Built Different.<br><span>Built to Win.</span></h2>
+          <div class="divider"></div>
+          <p class="section-lead">Most ecommerce companies pick one lane. We built five and made them work in perfect harmony — so our clients and partners capture value that standalone operations simply can't reach.</p>
+        </div>
+        <div class="why-features">
+          <div class="why-feature reveal" style="transition-delay:0.1s">
+            <div class="why-feature-icon">⚙️</div>
+            <div class="why-feature-body">
+              <h4>Integrated Infrastructure</h4>
+              <p>Our five divisions share data, resources, and intelligence — creating compounding advantages unavailable to single-focus operators.</p>
+            </div>
+          </div>
+          <div class="why-feature reveal" style="transition-delay:0.2s">
+            <div class="why-feature-icon">🔒</div>
+            <div class="why-feature-body">
+              <h4>Proprietary Sourcing Edge</h4>
+              <p>Our exclusive sourcing methodology identifies winning products before they trend — giving our network a consistent first-mover advantage.</p>
+            </div>
+          </div>
+          <div class="why-feature reveal" style="transition-delay:0.3s">
+            <div class="why-feature-icon">🌍</div>
+            <div class="why-feature-body">
+              <h4>Multi-Platform Presence</h4>
+              <p>Diversification across Amazon, TikTok Shop, and Walmart reduces platform dependency risk and unlocks multiple revenue streams simultaneously.</p>
+            </div>
+          </div>
+          <div class="why-feature reveal" style="transition-delay:0.4s">
+            <div class="why-feature-icon">🏆</div>
+            <div class="why-feature-body">
+              <h4>Enterprise-Grade Operations</h4>
+              <p>We run with the processes, systems, and talent standards of enterprise companies — applied to the agility of a growth-focused accelerator.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="why-right">
+        <div class="why-stat-card reveal-scale" style="transition-delay:0.05s">
+          <span class="stat-big">360°</span>
+          <p class="stat-label">Full Ecommerce Coverage</p>
+        </div>
+        <div class="why-stat-card reveal-scale" style="transition-delay:0.15s">
+          <span class="stat-big">5</span>
+          <p class="stat-label">Elite Divisions</p>
+        </div>
+        <div class="why-stat-card reveal-scale" style="transition-delay:0.25s">
+          <span class="stat-big">3</span>
+          <p class="stat-label">Major Platforms</p>
+        </div>
+        <div class="why-stat-card reveal-scale" style="transition-delay:0.35s">
+          <span class="stat-big">1</span>
+          <p class="stat-label">Unified Ecosystem</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOUNDER ────────────────────────────────────────────────── -->
+<section id="founder">
+  <div class="container">
+    <div class="founder-grid">
+      <div class="founder-text reveal-left">
+        <div class="tag">The Visionary</div>
+        <h2 class="section-title">A Founder Built<br><span>For This Moment</span></h2>
+        <div class="divider"></div>
+        <p class="section-lead">
+          Viral Vamp was founded with a singular conviction: that ecommerce is the greatest wealth-building opportunity of our generation — and that most sellers are leaving enormous value on the table by operating in silos.
+        </p>
+        <p style="color:var(--text); font-size:0.92rem; line-height:1.85; margin-bottom:1rem;">
+          With deep roots in ecommerce operations, supply chain strategy, and digital marketplace growth, our founder built Viral Vamp to be the infrastructure layer that ambitious sellers, operators, and brands have always needed — but never had access to under one roof.
+        </p>
+        <p style="color:var(--text); font-size:0.92rem; line-height:1.85;">
+          The five-division model isn't just a business structure — it's a philosophy. Every division was designed to solve a real pain point experienced firsthand in the trenches of building and scaling ecommerce businesses across multiple platforms.
+        </p>
+        <blockquote class="founder-quote">
+          "I built Viral Vamp because I saw sellers working hard in isolation while the real opportunity was in connecting the dots. When distribution, sourcing, talent, logistics, and brand strategy all speak the same language — that's when ecommerce becomes unstoppable."
+        </blockquote>
+        <div class="founder-sig">
+          <div class="founder-sig-line"></div>
+          <div>
+            <div class="founder-sig-name">Founder &amp; CEO, Viral Vamp</div>
+            <div class="founder-sig-title">Ecommerce Accelerator &amp; Parent Company</div>
+          </div>
+        </div>
+      </div>
+      <div class="founder-image-wrap reveal-right">
+        <div class="founder-img-placeholder">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="32" cy="22" r="12" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+            <path d="M10 56c0-12.15 9.85-22 22-22s22 9.85 22 22" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+          </svg>
+          <span>Replace with<br>founder photo</span>
+        </div>
+        <div class="founder-badge">
+          <strong>CEO</strong>
+          <span>Founder</span>
+        </div>
+        <div class="founder-deco-ring"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ────────────────────────────────────────────────────── -->
+<section id="cta">
+  <div class="cta-bg"></div>
+  <div class="cta-glow"></div>
+  <div class="container">
+    <div class="cta-inner reveal">
+      <div class="tag" style="margin:0 auto 1.4rem;">Ready to Accelerate?</div>
+      <h2 class="section-title">Let's Build Your<br><span>Ecommerce Empire</span></h2>
+      <p class="section-lead">
+        Whether you're a brand looking to scale, a seller ready to systemize, or a partner wanting to grow — Viral Vamp has the infrastructure, expertise, and drive to take you there.
+      </p>
+      <div class="cta-buttons">
+        <a href="mailto:hello@viralvamp.com" class="btn btn-primary">Contact Us Today →</a>
+        <a href="#divisions" class="btn btn-outline">Explore Divisions</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo">Viral <span>Vamp</span></a>
+        <p class="footer-tagline">An ecommerce accelerator and parent company operating five elite divisions across Amazon, TikTok Shop, and Walmart.</p>
+        <div class="footer-socials">
+          <a href="#" class="social-btn" aria-label="LinkedIn">in</a>
+          <a href="#" class="social-btn" aria-label="Twitter/X">𝕏</a>
+          <a href="#" class="social-btn" aria-label="Instagram">📷</a>
+          <a href="#" class="social-btn" aria-label="TikTok">♪</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Divisions</h4>
+        <ul>
+          <li><a href="#divisions">Distribution</a></li>
+          <li><a href="#divisions">Sourcing</a></li>
+          <li><a href="#divisions">VA Placement</a></li>
+          <li><a href="#divisions">3PL Logistics</a></li>
+          <li><a href="#divisions">Brand Management</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Platforms</h4>
+        <ul>
+          <li><a href="#platforms">Amazon</a></li>
+          <li><a href="#platforms">TikTok Shop</a></li>
+          <li><a href="#platforms">Walmart</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#founder">Founder</a></li>
+          <li><a href="#cta">Contact</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Viral Vamp. All rights reserved.</p>
+      <p>Built for ecommerce dominance.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ─── SCRIPTS ────────────────────────────────────────────────── -->
+<script>
+  /* ── Nav scroll effect ── */
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  /* ── Hamburger ── */
+  const hamburger = document.getElementById('hamburger');
+  const navLinks  = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+  });
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => navLinks.classList.remove('open'));
+  });
+
+  /* ── Particles ── */
+  const container = document.getElementById('particles');
+  const PARTICLE_COUNT = 28;
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 6 + 3;
+    p.style.cssText = `
+      width:${size}px;
+      height:${size}px;
+      left:${Math.random() * 100}%;
+      animation-duration:${Math.random() * 12 + 10}s;
+      animation-delay:${Math.random() * -20}s;
+      opacity:${Math.random() * 0.5 + 0.2};
+      background:rgba(${Math.random()>0.5?'4,102,200':'56,163,245'},${Math.random()*0.5+0.3});
+    `;
+    container.appendChild(p);
+  }
+
+  /* ── Intersection Observer for scroll animations ── */
+  const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => observer.observe(el));
+
+  /* ── Stagger reveal children ── */
+  document.querySelectorAll('.divisions-grid, .platform-cards, .why-features, .about-pillars, .why-right').forEach(parent => {
+    Array.from(parent.children).forEach((child, i) => {
+      if (!child.style.transitionDelay) {
+        child.style.transitionDelay = `${i * 0.08}s`;
+      }
+    });
+  });
+
+  /* ── Smooth counter for stats (hero) ── */
+  function animateCounter(el, target, suffix = '') {
+    let start = 0;
+    const end = parseInt(target);
+    if (isNaN(end)) return;
+    const dur = 1800;
+    const step = (timestamp) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.floor(eased * end) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  /* ── Division card glow follows mouse ── */
+  document.querySelectorAll('.division-card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const glow = card.querySelector('.division-card-glow');
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      if (glow) {
+        glow.style.left = `${x - 100}px`;
+        glow.style.top  = `${y - 100}px`;
+      }
+    });
+  });
+
+  /* ── Subtle parallax on hero headline ── */
+  const heroHeadline = document.querySelector('.hero-headline');
+  window.addEventListener('scroll', () => {
+    const sy = window.scrollY;
+    if (sy < window.innerHeight && heroHeadline) {
+      heroHeadline.style.transform = `translateY(${sy * 0.18}px)`;
+      heroHeadline.style.opacity   = 1 - sy / (window.innerHeight * 0.65);
+    }
+  }, { passive: true });
+</script>
+</body>
+</html>

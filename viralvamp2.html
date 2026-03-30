@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viral Vamp — Ecommerce Accelerator</title>
+<style>
+/* ─── RESET & TOKENS ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:   #020750;
+  --blue:   #0466c8;
+  --white:  #ffffff;
+  --chalk:  #f4f6fb;
+  --ink:    #0a0d2e;
+  --mist:   #dce6f5;
+  --steel:  #8ea6cc;
+  --radius: 4px;
+  --font-head: 'Georgia', 'Times New Roman', serif;
+  --font-ui:   'Helvetica Neue', Arial, sans-serif;
+}
+html { scroll-behavior: smooth; overflow-x: hidden; }
+body { background: var(--white); color: var(--navy); font-family: var(--font-ui); line-height: 1.65; overflow-x: hidden; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--chalk); }
+::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 2px; }
+
+/* ─── UTILITY ─────────────────────────────────────────────── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 2.5rem; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 0.75rem;
+  font-size: 0.7rem; font-weight: 800; letter-spacing: 0.22em;
+  text-transform: uppercase; margin-bottom: 1.4rem;
+}
+.eyebrow-line { width: 28px; height: 2px; background: var(--blue); flex-shrink: 0; }
+.eyebrow-blue { color: var(--blue); }
+.eyebrow-white { color: var(--white); }
+.eyebrow-white .eyebrow-line { background: var(--white); }
+.heading-xl {
+  font-family: var(--font-head);
+  font-size: clamp(3rem, 5.5vw, 5.5rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.04;
+}
+.heading-lg {
+  font-family: var(--font-head);
+  font-size: clamp(2.2rem, 4vw, 3.8rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+.heading-md {
+  font-family: var(--font-head);
+  font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+.blue-word { color: var(--blue); }
+.body-lg { font-size: 1.05rem; line-height: 1.85; color: #3a4a7a; }
+.body-sm { font-size: 0.88rem; line-height: 1.75; color: #5a6a9a; }
+.white-body { color: rgba(255,255,255,0.75); }
+.btn {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 0.85rem 2rem; font-size: 0.82rem; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  text-decoration: none; border: none; cursor: pointer;
+  transition: all 0.22s;
+}
+.btn-navy { background: var(--navy); color: var(--white); }
+.btn-navy:hover { background: var(--ink); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(2,7,80,0.25); }
+.btn-blue { background: var(--blue); color: var(--white); }
+.btn-blue:hover { background: #0556ae; transform: translateY(-2px); box-shadow: 0 12px 32px rgba(4,102,200,0.4); }
+.btn-outline-white { background: transparent; color: var(--white); border: 2px solid rgba(255,255,255,0.4); }
+.btn-outline-white:hover { border-color: var(--white); background: rgba(255,255,255,0.08); }
+.btn-outline-navy { background: transparent; color: var(--navy); border: 2px solid var(--navy); }
+.btn-outline-navy:hover { background: var(--navy); color: var(--white); }
+
+/* ─── SCROLL REVEALS ─────────────────────────────────────── */
+.r-up   { opacity:0; transform:translateY(36px); transition: opacity .7s ease, transform .7s ease; }
+.r-left { opacity:0; transform:translateX(-36px); transition: opacity .7s ease, transform .7s ease; }
+.r-right{ opacity:0; transform:translateX(36px);  transition: opacity .7s ease, transform .7s ease; }
+.r-fade { opacity:0; transition: opacity .8s ease; }
+.r-up.on, .r-left.on, .r-right.on, .r-fade.on { opacity:1; transform:none; }
+
+/* ─── NAV ─────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: var(--white);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+nav.scrolled { border-color: var(--mist); box-shadow: 0 2px 20px rgba(2,7,80,0.07); }
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  max-width: 1200px; margin: 0 auto; padding: 0 2.5rem; height: 70px;
+}
+.logo {
+  font-family: var(--font-head); font-size: 1.45rem; font-weight: 700;
+  letter-spacing: -0.04em; text-decoration: none; color: var(--navy);
+  display: flex; align-items: center; gap: 0.3rem;
+}
+.logo-dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--blue); margin-left: 2px; flex-shrink: 0;
+  animation: dotBlink 2.5s ease-in-out infinite;
+}
+@keyframes dotBlink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.6)} }
+.nav-links { display: flex; gap: 2.2rem; list-style: none; align-items: center; }
+.nav-links a {
+  color: var(--navy); text-decoration: none; font-size: 0.8rem;
+  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  opacity: 0.65; transition: opacity 0.2s;
+}
+.nav-links a:hover { opacity: 1; }
+.nav-links .nav-cta { opacity: 1; }
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+.hamburger span { display: block; width: 24px; height: 2px; background: var(--navy); transition: 0.3s; }
+
+/* ─── HERO ─────────────────────────────────────────────────── */
+#hero {
+  min-height: 100vh;
+  background: var(--navy);
+  display: flex; flex-direction: column;
+  padding-top: 70px;
+  position: relative;
+  overflow: hidden;
+}
+/* geometric decorations */
+.hero-geo {
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+}
+.geo-stripe {
+  position: absolute;
+  background: rgba(4,102,200,0.08);
+}
+.geo-stripe-1 { top:0; right:0; width:48%; height:100%; }
+.geo-stripe-2 {
+  bottom: 0; left: 0; right: 0; height: 4px;
+  background: var(--blue);
+}
+.geo-corner {
+  position: absolute;
+  top: 70px; right: 0;
+  width: 48%;
+  height: calc(100% - 70px);
+  overflow: hidden;
+}
+.geo-corner-inner {
+  position: absolute; inset: 0;
+  background: rgba(4,102,200,0.06);
+  border-left: 1px solid rgba(4,102,200,0.18);
+}
+/* dot grid pattern */
+.hero-dots {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(rgba(4,102,200,0.25) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse 60% 60% at 75% 50%, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 60% at 75% 50%, black 30%, transparent 75%);
+}
+.hero-inner {
+  flex: 1; display: flex; align-items: center;
+  max-width: 1200px; margin: 0 auto; padding: 4rem 2.5rem;
+  width: 100%; position: relative; z-index: 1;
+}
+.hero-left { max-width: 640px; }
+.hero-kicker {
+  display: inline-flex; align-items: center; gap: 0.7rem;
+  font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--blue); margin-bottom: 2rem;
+  animation: fadeUp 0.7s both;
+}
+.kicker-pill {
+  background: var(--blue); color: var(--white);
+  padding: 0.25rem 0.75rem; font-size: 0.62rem;
+  font-weight: 800; letter-spacing: 0.15em;
+}
+.hero-h1 {
+  font-family: var(--font-head);
+  font-size: clamp(3.5rem, 7vw, 7rem);
+  font-weight: 700; letter-spacing: -0.055em; line-height: 0.96;
+  color: var(--white); margin-bottom: 2rem;
+  animation: fadeUp 0.8s 0.1s both;
+}
+.hero-h1 em { font-style: normal; color: var(--blue); }
+.hero-desc {
+  font-size: 1.05rem; line-height: 1.85;
+  color: rgba(255,255,255,0.55); max-width: 520px;
+  margin-bottom: 2.8rem;
+  animation: fadeUp 0.8s 0.2s both;
+}
+.hero-actions {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+  animation: fadeUp 0.8s 0.3s both;
+}
+.hero-counter-row {
+  display: flex; gap: 0; margin-top: 5rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  animation: fadeUp 0.8s 0.45s both;
+}
+.hero-counter {
+  flex: 1; padding: 1.8rem 0; padding-right: 2rem;
+  border-right: 1px solid rgba(255,255,255,0.1);
+}
+.hero-counter:last-child { border-right: none; padding-right: 0; padding-left: 2rem; }
+.counter-num {
+  font-family: var(--font-head); font-size: 3rem; font-weight: 700;
+  letter-spacing: -0.05em; color: var(--white); line-height: 1;
+  display: block; margin-bottom: 0.3rem;
+}
+.counter-num em { font-style: normal; color: var(--blue); }
+.counter-label {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: rgba(255,255,255,0.38);
+}
+/* floating platform tags */
+.hero-platform-tags {
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  width: 48%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1.2rem;
+  padding: 2rem;
+}
+.ptag {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-left: 3px solid var(--blue);
+  padding: 1.2rem 1.8rem;
+  width: 100%; max-width: 320px;
+  display: flex; align-items: center; gap: 1.2rem;
+  animation: ptFloat 5s ease-in-out infinite;
+  transition: border-color 0.3s;
+}
+.ptag:hover { border-left-color: var(--white); }
+.ptag:nth-child(2) { animation-delay: 1.6s; margin-left: 2rem; }
+.ptag:nth-child(3) { animation-delay: 3.2s; }
+@keyframes ptFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+.ptag-icon { font-size: 1.8rem; flex-shrink: 0; }
+.ptag-name { font-size: 1rem; font-weight: 800; color: var(--white); letter-spacing: -0.01em; }
+.ptag-sub  { font-size: 0.72rem; color: rgba(255,255,255,0.38); font-weight: 600; letter-spacing: 0.04em; margin-top: 2px; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:none} }
+
+/* ─── TICKER ─────────────────────────────────────────────── */
+.ticker-wrap { background: var(--blue); padding: 0.75rem 0; overflow: hidden; }
+.ticker-track { display:flex; width:max-content; animation: tickerRun 30s linear infinite; }
+.ticker-track:hover { animation-play-state: paused; }
+@keyframes tickerRun { to{transform:translateX(-50%)} }
+.ticker-item {
+  display: inline-flex; align-items: center; gap: 1rem;
+  padding: 0 2rem; font-size: 0.7rem; font-weight: 800;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(255,255,255,0.85); white-space: nowrap;
+}
+.ticker-sep { color: rgba(255,255,255,0.3); }
+
+/* ─── ABOUT ────────────────────────────────────────────────── */
+#about { padding: 9rem 0; background: var(--white); position: relative; overflow: hidden; }
+/* big watermark numeral */
+#about::before {
+  content: 'VV';
+  position: absolute; top: -2rem; left: -2rem;
+  font-family: var(--font-head); font-size: 28vw; font-weight: 700;
+  color: rgba(4,102,200,0.03); line-height: 1; pointer-events: none;
+  letter-spacing: -0.08em;
+}
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7rem; align-items: center; }
+.about-img-wrap { position: relative; }
+.about-img-block {
+  width: 100%; aspect-ratio: 3/4;
+  background: var(--navy);
+  border-radius: 2px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1rem; position: relative; overflow: hidden;
+}
+/* blue bottom stripe on placeholder */
+.about-img-block::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 4px; background: var(--blue);
+}
+.about-img-block svg { width: 52px; opacity: 0.18; color: var(--white); }
+.about-img-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+/* floating metric card */
+.about-metric {
+  position: absolute; bottom: -1.5rem; right: -1.5rem;
+  background: var(--blue); padding: 1.5rem 1.8rem;
+  text-align: center;
+}
+.about-metric-num { font-family: var(--font-head); font-size: 2.8rem; font-weight: 700; color: var(--white); letter-spacing: -0.05em; display: block; }
+.about-metric-lbl { font-size: 0.65rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.65); }
+.about-deco-frame {
+  position: absolute; top: -1.2rem; left: -1.2rem;
+  width: 80px; height: 80px;
+  border: 2px solid var(--mist); pointer-events: none;
+}
+.about-text-inner { position: relative; }
+.about-text-inner .heading-lg { margin-bottom: 1.5rem; }
+.about-body { font-size: 1rem; line-height: 1.85; color: #3a4a7a; margin-bottom: 1.5rem; }
+.about-divider { width: 48px; height: 3px; background: var(--blue); margin-bottom: 1.8rem; }
+.fact-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--mist); margin-top: 2.5rem; border: 1px solid var(--mist); }
+.fact-cell {
+  background: var(--white); padding: 1.4rem;
+  transition: background 0.25s;
+}
+.fact-cell:hover { background: var(--chalk); }
+.fact-cell-num {
+  font-family: var(--font-head); font-size: 2rem; font-weight: 700;
+  letter-spacing: -0.04em; color: var(--blue); display: block;
+}
+.fact-cell-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--navy); opacity: 0.5; }
+
+/* ─── DIVISIONS ─────────────────────────────────────────────── */
+#divisions { padding: 9rem 0; background: var(--chalk); position: relative; }
+.divisions-hd { margin-bottom: 5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: end; }
+.divisions-hd-actions { display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; gap: 1rem; }
+.divisions-hd-actions .body-lg { max-width: 380px; text-align: right; }
+.div-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: auto auto;
+  gap: 1px;
+  background: var(--mist);
+  border: 1px solid var(--mist);
+}
+/* card spans */
+.div-card:nth-child(1) { grid-column: span 5; }
+.div-card:nth-child(2) { grid-column: span 7; }
+.div-card:nth-child(3) { grid-column: span 4; }
+.div-card:nth-child(4) { grid-column: span 4; }
+.div-card:nth-child(5) { grid-column: span 4; }
+.div-card {
+  background: var(--white);
+  padding: 2.8rem 2.5rem;
+  position: relative; overflow: hidden;
+  cursor: default;
+  transition: background 0.3s;
+}
+.div-card:hover { background: var(--navy); }
+/* animated left stripe */
+.div-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; width: 3px; bottom: 0;
+  background: var(--blue);
+  transform: scaleY(0); transform-origin: bottom;
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.div-card:hover::before { transform: scaleY(1); }
+.div-card-num {
+  font-family: var(--font-head); font-size: 4rem; font-weight: 700;
+  letter-spacing: -0.06em; line-height: 1;
+  color: var(--mist); margin-bottom: 1.6rem;
+  transition: color 0.3s;
+}
+.div-card:hover .div-card-num { color: rgba(4,102,200,0.35); }
+.div-card-icon { font-size: 1.8rem; margin-bottom: 1rem; display: block; transition: transform 0.3s; }
+.div-card:hover .div-card-icon { transform: scale(1.15); }
+.div-card-name {
+  font-family: var(--font-head); font-size: 1.3rem; font-weight: 700;
+  letter-spacing: -0.02em; margin-bottom: 0.9rem; color: var(--navy);
+  transition: color 0.3s;
+}
+.div-card:hover .div-card-name { color: var(--white); }
+.div-card-desc { font-size: 0.85rem; line-height: 1.75; color: #5a6a9a; transition: color 0.3s; }
+.div-card:hover .div-card-desc { color: rgba(255,255,255,0.55); }
+.div-card-tag {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  margin-top: 1.6rem; font-size: 0.68rem; font-weight: 800;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--blue); border-top: 1px solid var(--mist);
+  padding-top: 1.2rem; transition: color 0.3s, border-color 0.3s;
+}
+.div-card:hover .div-card-tag { color: var(--blue); border-color: rgba(255,255,255,0.12); }
+
+/* ─── PLATFORMS ─────────────────────────────────────────────── */
+#platforms {
+  padding: 0; background: var(--navy);
+  display: grid; grid-template-columns: repeat(3, 1fr);
+}
+.platform-panel {
+  padding: 6rem 3.5rem;
+  border-right: 1px solid rgba(255,255,255,0.07);
+  position: relative; overflow: hidden;
+  transition: background 0.4s;
+  cursor: default;
+}
+.platform-panel:last-child { border-right: none; }
+.platform-panel:hover { background: rgba(4,102,200,0.12); }
+/* top accent bar */
+.platform-panel::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--blue); transform: scaleX(0); transform-origin: left;
+  transition: transform 0.4s;
+}
+.platform-panel:hover::before { transform: scaleX(1); }
+.pp-icon { font-size: 2.8rem; display: block; margin-bottom: 1.8rem; }
+.pp-name {
+  font-family: var(--font-head); font-size: 2rem; font-weight: 700;
+  letter-spacing: -0.04em; color: var(--white); margin-bottom: 1rem;
+}
+.pp-desc { font-size: 0.88rem; line-height: 1.78; color: rgba(255,255,255,0.45); margin-bottom: 2rem; }
+.pp-stat {
+  display: inline-block;
+  border: 1px solid rgba(4,102,200,0.4);
+  padding: 0.7rem 1.2rem;
+}
+.pp-stat strong { font-family: var(--font-head); font-size: 1.6rem; font-weight: 700; letter-spacing: -0.04em; color: var(--blue); display: block; }
+.pp-stat span { font-size: 0.65rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.35); }
+
+/* ─── WHY US ─────────────────────────────────────────────────── */
+#why { padding: 9rem 0; background: var(--white); }
+.why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7rem; align-items: start; }
+.why-left .heading-lg { margin-bottom: 1.2rem; }
+.why-left .body-lg { max-width: 440px; margin-bottom: 2.5rem; }
+.why-list { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--mist); }
+.why-item {
+  display: grid; grid-template-columns: 3rem 1fr;
+  gap: 1.5rem; align-items: start;
+  padding: 1.8rem 0; border-bottom: 1px solid var(--mist);
+  cursor: default; transition: padding 0.25s;
+}
+.why-item:hover { padding-left: 0.5rem; }
+.why-item:hover .wi-num { color: var(--blue); }
+.wi-num {
+  font-family: var(--font-head); font-size: 1.6rem; font-weight: 700;
+  letter-spacing: -0.04em; color: var(--mist);
+  transition: color 0.25s; padding-top: 0.1rem;
+}
+.wi-body h4 { font-size: 0.95rem; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 0.4rem; color: var(--navy); }
+.wi-body p  { font-size: 0.84rem; line-height: 1.72; color: #5a6a9a; }
+/* right side: stacked stats + big callout */
+.why-right { display: flex; flex-direction: column; gap: 1px; background: var(--mist); border: 1px solid var(--mist); }
+.why-cta-block {
+  background: var(--blue); padding: 3rem;
+  display: flex; flex-direction: column; gap: 1.4rem;
+}
+.why-cta-block .heading-md { color: var(--white); }
+.why-stat-row {
+  background: var(--white);
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+  background-color: var(--mist);
+}
+.wsr-cell { background: var(--white); padding: 2.2rem 2rem; text-align: center; transition: background 0.25s; }
+.wsr-cell:hover { background: var(--chalk); }
+.wsr-num { font-family: var(--font-head); font-size: 2.8rem; font-weight: 700; letter-spacing: -0.05em; color: var(--navy); display: block; }
+.wsr-lbl { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--steel); }
+.why-quote-block { background: var(--navy); padding: 2.5rem 3rem; }
+.why-quote-text { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; color: var(--white); line-height: 1.5; margin-bottom: 1rem; }
+.why-quote-attr { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+
+/* ─── FOUNDER ────────────────────────────────────────────────── */
+#founder { padding: 9rem 0; background: var(--chalk); }
+.founder-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7rem; align-items: center; }
+.founder-text .heading-lg { margin-bottom: 1.5rem; }
+.founder-body { font-size: 1rem; line-height: 1.85; color: #3a4a7a; margin-bottom: 1.4rem; }
+.founder-divider { width: 48px; height: 3px; background: var(--blue); margin-bottom: 1.8rem; }
+.founder-blockquote {
+  border-left: 3px solid var(--blue);
+  padding: 1.4rem 1.8rem;
+  background: var(--white);
+  margin: 2rem 0;
+}
+.founder-blockquote p {
+  font-family: var(--font-head); font-size: 1.05rem; font-weight: 700;
+  letter-spacing: -0.015em; line-height: 1.55; color: var(--navy);
+}
+.founder-byline {
+  display: flex; align-items: center; gap: 1.2rem; margin-top: 2rem;
+}
+.byline-dash { width: 32px; height: 2px; background: var(--blue); flex-shrink: 0; }
+.byline-name { font-size: 0.92rem; font-weight: 800; letter-spacing: -0.01em; color: var(--navy); }
+.byline-role { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--steel); margin-top: 2px; }
+.founder-img-wrap { position: relative; }
+.founder-img-block {
+  width: 100%; max-width: 440px; aspect-ratio: 4/5;
+  background: var(--navy); border-radius: 2px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1rem; position: relative; overflow: hidden;
+}
+.founder-img-block::after {
+  content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 4px;
+  background: var(--blue);
+}
+.founder-img-block svg { width: 56px; opacity: 0.15; color: var(--white); }
+.founder-img-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.22); }
+.founder-badge-card {
+  position: absolute; bottom: -1.5rem; left: -1.5rem;
+  background: var(--blue); padding: 1.3rem 1.8rem;
+}
+.founder-badge-card strong { font-family: var(--font-head); font-size: 1.6rem; font-weight: 700; color: var(--white); display: block; letter-spacing: -0.03em; }
+.founder-badge-card span { font-size: 0.65rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+
+/* ─── CTA STRIP ──────────────────────────────────────────────── */
+#cta {
+  background: var(--blue);
+  padding: 7rem 0;
+  position: relative; overflow: hidden;
+}
+/* diagonal texture */
+#cta::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px,
+    transparent 1px, transparent 32px
+  );
+  pointer-events: none;
+}
+.cta-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 4rem; flex-wrap: wrap; position: relative; z-index: 1;
+}
+.cta-heading { font-family: var(--font-head); font-size: clamp(2.4rem,4.5vw,4rem); font-weight: 700; letter-spacing: -0.04em; color: var(--white); max-width: 600px; line-height: 1.1; }
+.cta-right { display: flex; flex-direction: column; gap: 1rem; align-items: flex-start; }
+.cta-sub { font-size: 0.88rem; color: rgba(255,255,255,0.65); max-width: 320px; line-height: 1.7; }
+.cta-buttons { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+/* ─── FOOTER ─────────────────────────────────────────────────── */
+footer { background: var(--navy); padding: 5rem 0 2.5rem; }
+.footer-top {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 3rem; padding-bottom: 4rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.footer-brand-name { font-family: var(--font-head); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.04em; color: var(--white); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.3rem; }
+.footer-desc { font-size: 0.83rem; color: rgba(255,255,255,0.3); line-height: 1.75; max-width: 260px; margin-bottom: 1.8rem; }
+.footer-socials { display: flex; gap: 0.6rem; }
+.fsoc {
+  width: 36px; height: 36px; border: 1px solid rgba(255,255,255,0.12);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.4); text-decoration: none; font-size: 0.85rem;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.fsoc:hover { border-color: var(--blue); color: var(--white); background: rgba(4,102,200,0.15); }
+.footer-col h5 { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.25); margin-bottom: 1.4rem; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+.footer-col ul li a { font-size: 0.83rem; color: rgba(255,255,255,0.45); text-decoration: none; transition: color 0.2s; }
+.footer-col ul li a:hover { color: var(--white); }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding-top: 2rem; }
+.footer-bottom p { font-size: 0.75rem; color: rgba(255,255,255,0.2); }
+
+/* ─── MOBILE NAV ─────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .hamburger { display: flex; }
+  .nav-links {
+    position: fixed; top: 70px; right: -100%; width: min(300px,90vw);
+    bottom: 0; background: var(--white); flex-direction: column;
+    padding: 2.5rem 2rem; align-items: flex-start;
+    transition: right 0.35s cubic-bezier(0.4,0,0.2,1); z-index: 999;
+    border-left: 3px solid var(--blue); gap: 1.5rem;
+    box-shadow: -8px 0 40px rgba(2,7,80,0.12);
+  }
+  .nav-links.open { right: 0; }
+  .nav-links a { font-size: 0.95rem; opacity: 1; }
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .divisions-hd { grid-template-columns: 1fr; }
+  .divisions-hd-actions { align-items: flex-start; }
+  .divisions-hd-actions .body-lg { text-align: left; }
+  .div-card:nth-child(n) { grid-column: span 12; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  #platforms { grid-template-columns: 1fr; }
+  .platform-panel { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .platform-panel:last-child { border-bottom: none; }
+}
+@media (max-width: 768px) {
+  .hero-inner { flex-direction: column; padding: 3rem 2rem; }
+  .hero-platform-tags { position: static; width: 100%; transform: none; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; padding: 0; margin-top: 2.5rem; }
+  .ptag { max-width: 100%; }
+  .hero-counter-row { gap: 0; }
+  .about-grid, .why-grid, .founder-grid { grid-template-columns: 1fr; gap: 3.5rem; }
+  .about-metric { bottom: -1rem; right: -0.5rem; }
+  .cta-inner { flex-direction: column; gap: 2.5rem; }
+  .footer-top { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .why-right { display: flex; flex-direction: column; }
+}
+@media (max-width: 480px) {
+  .hero-h1 { font-size: 3rem; }
+  .hero-actions { flex-direction: column; align-items: flex-start; }
+  .hero-counter-row { flex-direction: column; gap: 0; }
+  .hero-counter { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 1.2rem 0; }
+  .hero-counter:last-child { border-bottom: none; }
+  .fact-row { grid-template-columns: 1fr; }
+  .why-stat-row { grid-template-columns: 1fr; }
+  .cta-buttons { flex-direction: column; width: 100%; }
+  .cta-buttons .btn { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ──────────────────────────────────────────────────── -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="#" class="logo">Viral Vamp<span class="logo-dot"></span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about">About</a></li>
+      <li><a href="#divisions">Divisions</a></li>
+      <li><a href="#platforms">Platforms</a></li>
+      <li><a href="#founder">Founder</a></li>
+      <li><a href="#cta" class="btn btn-blue nav-cta">Get Started</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<!-- ─── HERO ──────────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-geo">
+    <div class="geo-corner"><div class="geo-corner-inner"></div></div>
+    <div class="geo-stripe-2"></div>
+  </div>
+  <div class="hero-dots"></div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-kicker">
+        <span class="kicker-pill">Est. Now</span>
+        Ecommerce Accelerator &amp; Parent Company
+      </div>
+      <h1 class="hero-h1">We Scale<br><em>Ecommerce</em><br>Empires.</h1>
+      <p class="hero-desc">Viral Vamp operates five elite divisions across Amazon, TikTok Shop, and Walmart — covering every pillar of modern ecommerce in one tightly integrated ecosystem.</p>
+      <div class="hero-actions">
+        <a href="#divisions" class="btn btn-blue">Explore Divisions →</a>
+        <a href="#founder" class="btn btn-outline-white">Meet the Founder</a>
+      </div>
+      <div class="hero-counter-row">
+        <div class="hero-counter">
+          <span class="counter-num">5<em>+</em></span>
+          <span class="counter-label">Core Divisions</span>
+        </div>
+        <div class="hero-counter">
+          <span class="counter-num">3</span>
+          <span class="counter-label">Major Platforms</span>
+        </div>
+        <div class="hero-counter">
+          <span class="counter-num">360<em>°</em></span>
+          <span class="counter-label">Coverage</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-platform-tags">
+      <div class="ptag">
+        <span class="ptag-icon">📦</span>
+        <div>
+          <div class="ptag-name">Amazon</div>
+          <div class="ptag-sub">FBA · FBM · PPC · A+ Content</div>
+        </div>
+      </div>
+      <div class="ptag">
+        <span class="ptag-icon">📱</span>
+        <div>
+          <div class="ptag-name">TikTok Shop</div>
+          <div class="ptag-sub">Social Commerce · Affiliates · Live</div>
+        </div>
+      </div>
+      <div class="ptag">
+        <span class="ptag-icon">🛒</span>
+        <div>
+          <div class="ptag-name">Walmart</div>
+          <div class="ptag-sub">WFS · Sponsored Products · Omni</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TICKER ────────────────────────────────────────────────── -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-track">
+    <span class="ticker-item">Distribution <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">Proprietary Sourcing <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">VA Placement <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">3PL Logistics <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">Brand Management <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">Amazon <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">TikTok Shop <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">Walmart <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">Ecommerce Acceleration <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">Distribution <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">Proprietary Sourcing <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">VA Placement <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">3PL Logistics <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">Brand Management <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">Amazon <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">TikTok Shop <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">Walmart <span class="ticker-sep">—</span></span>
+    <span class="ticker-item">Ecommerce Acceleration <span class="ticker-sep">—</span></span>
+  </div>
+</div>
+
+<!-- ─── ABOUT ─────────────────────────────────────────────────── -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-img-wrap r-left">
+        <div class="about-img-block">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+            <rect x="8" y="8" width="48" height="48" rx="2" stroke-width="2"/>
+            <circle cx="32" cy="26" r="9" stroke-width="2"/>
+            <path d="M14 56c0-10 8-17 18-17s18 7 18 17" stroke-width="2"/>
+          </svg>
+          <span class="about-img-label">Replace with company image</span>
+        </div>
+        <div class="about-metric">
+          <span class="about-metric-num">5</span>
+          <span class="about-metric-lbl">Elite Divisions</span>
+        </div>
+        <div class="about-deco-frame"></div>
+      </div>
+      <div class="about-text-inner r-right">
+        <div class="eyebrow eyebrow-blue"><span class="eyebrow-line"></span>Who We Are</div>
+        <h2 class="heading-lg">The Engine Behind<br><span class="blue-word">Ecommerce Success</span></h2>
+        <div class="about-divider"></div>
+        <p class="about-body">Viral Vamp is an ecommerce accelerator and parent company built to give brands, sellers, and operators an unfair advantage. We've engineered a five-division ecosystem that covers every critical pillar of modern ecommerce — from getting products to shelves, to scaling them into household names.</p>
+        <p class="about-body">Our integrated model means our divisions don't just co-exist — they amplify each other. A product sourced through our proprietary method flows through our 3PL, gets amplified by our brand management team, and fulfilled via our distribution arm — all supported by rigorously placed virtual assistants keeping operations at peak performance.</p>
+        <div class="fact-row r-up" style="transition-delay:0.15s">
+          <div class="fact-cell">
+            <span class="fact-cell-num">360°</span>
+            <span class="fact-cell-label">Full Coverage</span>
+          </div>
+          <div class="fact-cell">
+            <span class="fact-cell-num">5</span>
+            <span class="fact-cell-label">Divisions</span>
+          </div>
+          <div class="fact-cell">
+            <span class="fact-cell-num">3</span>
+            <span class="fact-cell-label">Platforms</span>
+          </div>
+          <div class="fact-cell">
+            <span class="fact-cell-num">1</span>
+            <span class="fact-cell-label">Ecosystem</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DIVISIONS ─────────────────────────────────────────────── -->
+<section id="divisions">
+  <div class="container">
+    <div class="divisions-hd">
+      <div class="r-left">
+        <div class="eyebrow eyebrow-blue"><span class="eyebrow-line"></span>Our Ecosystem</div>
+        <h2 class="heading-lg">Five Divisions.<br><span class="blue-word">One Unstoppable Force.</span></h2>
+      </div>
+      <div class="divisions-hd-actions r-right">
+        <p class="body-lg">Each division solves a specific ecommerce challenge. Together they form a closed-loop system that leaves no growth opportunity on the table.</p>
+        <a href="#cta" class="btn btn-navy">Partner With Us →</a>
+      </div>
+    </div>
+    <div class="div-grid">
+      <div class="div-card r-up" style="transition-delay:0.05s">
+        <div class="div-card-num">01</div>
+        <span class="div-card-icon">📦</span>
+        <h3 class="div-card-name">Distribution Company</h3>
+        <p class="div-card-desc">Our distribution arm ensures products move swiftly, reliably, and cost-effectively. We leverage carrier partnerships, optimized routing, and real-time tracking to maintain fulfillment standards that protect seller ratings and customer satisfaction across every channel.</p>
+        <div class="div-card-tag">↗ Fulfillment &amp; Logistics</div>
+      </div>
+      <div class="div-card r-up" style="transition-delay:0.1s">
+        <div class="div-card-num">02</div>
+        <span class="div-card-icon">🎯</span>
+        <h3 class="div-card-name">Sourcing Company</h3>
+        <p class="div-card-desc">Powered by our proprietary sourcing methodology, our sourcing division identifies high-margin, high-demand products before the competition sees them. Our intelligence framework combines trend analytics, supplier vetting, and margin modeling to deliver a consistent pipeline of winning SKUs.</p>
+        <div class="div-card-tag">↗ Proprietary Intelligence</div>
+      </div>
+      <div class="div-card r-up" style="transition-delay:0.15s">
+        <div class="div-card-num">03</div>
+        <span class="div-card-icon">🤝</span>
+        <h3 class="div-card-name">VA Placement Service</h3>
+        <p class="div-card-desc">We rigorously screen, train, and place specialized virtual assistants across all key ecommerce functions — listing management, customer service, PPC optimization, and inventory planning — so your operations never miss a beat.</p>
+        <div class="div-card-tag">↗ Talent Placement</div>
+      </div>
+      <div class="div-card r-up" style="transition-delay:0.2s">
+        <div class="div-card-num">04</div>
+        <span class="div-card-icon">🏭</span>
+        <h3 class="div-card-name">Third-Party Logistics (3PL)</h3>
+        <p class="div-card-desc">Scalable warehousing, inventory management, pick-and-pack, kitting, and multi-channel fulfillment. We integrate directly with Amazon FBM, Walmart WFS prep, and TikTok Shop fulfillment requirements to keep your supply chain seamless.</p>
+        <div class="div-card-tag">↗ Warehousing &amp; 3PL</div>
+      </div>
+      <div class="div-card r-up" style="transition-delay:0.25s">
+        <div class="div-card-num">05</div>
+        <span class="div-card-icon">🏷️</span>
+        <h3 class="div-card-name">Brand Management</h3>
+        <p class="div-card-desc">We build brands with lasting equity — overseeing positioning, creative assets, storefront optimization, review strategy, and cross-channel brand consistency. We transform sellers into recognizable, trusted names that dominate their categories.</p>
+        <div class="div-card-tag">↗ Brand Building</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PLATFORMS ─────────────────────────────────────────────── -->
+<section id="platforms">
+  <div class="platform-panel r-fade" style="transition-delay:0.05s">
+    <span class="pp-icon">📦</span>
+    <h3 class="pp-name">Amazon</h3>
+    <p class="pp-desc">FBA, FBM, Brand Registry, and PPC mastery. We operate at every level of the world's most competitive marketplace — from listing optimization to A+ content to automated advertising strategy.</p>
+    <div class="pp-stat"><strong>#1</strong><span>Platform by Revenue</span></div>
+  </div>
+  <div class="platform-panel r-fade" style="transition-delay:0.14s">
+    <span class="pp-icon">📱</span>
+    <h3 class="pp-name">TikTok Shop</h3>
+    <p class="pp-desc">The fastest-growing social commerce platform on the planet. We help brands leverage content-to-purchase funnels, affiliate partnerships, and live shopping to reach the next generation of buyers.</p>
+    <div class="pp-stat"><strong>Fastest</strong><span>Growing Platform</span></div>
+  </div>
+  <div class="platform-panel r-fade" style="transition-delay:0.23s">
+    <span class="pp-icon">🛒</span>
+    <h3 class="pp-name">Walmart</h3>
+    <p class="pp-desc">The sleeping giant of ecommerce. Our Walmart expertise includes WFS optimization, Sponsored Products management, and omnichannel brand strategy for an underserved but explosive marketplace.</p>
+    <div class="pp-stat"><strong>$100B+</strong><span>Marketplace GMV</span></div>
+  </div>
+</section>
+
+<!-- ─── WHY US ─────────────────────────────────────────────────── -->
+<section id="why">
+  <div class="container">
+    <div class="why-grid">
+      <div class="why-left">
+        <div class="r-left">
+          <div class="eyebrow eyebrow-blue"><span class="eyebrow-line"></span>Why Viral Vamp</div>
+          <h2 class="heading-lg">Built Different.<br><span class="blue-word">Built to Win.</span></h2>
+          <p class="body-lg">Most ecommerce companies pick one lane. We built five and made them work in perfect harmony — so clients and partners capture value that standalone operations simply can't reach.</p>
+        </div>
+        <div class="why-list">
+          <div class="why-item r-up" style="transition-delay:0.05s">
+            <div class="wi-num">01</div>
+            <div class="wi-body"><h4>Integrated Infrastructure</h4><p>Our five divisions share data, resources, and intelligence — creating compounding advantages unavailable to single-focus operators.</p></div>
+          </div>
+          <div class="why-item r-up" style="transition-delay:0.12s">
+            <div class="wi-num">02</div>
+            <div class="wi-body"><h4>Proprietary Sourcing Edge</h4><p>Our exclusive sourcing methodology identifies winning products before they trend — giving our network a consistent first-mover advantage.</p></div>
+          </div>
+          <div class="why-item r-up" style="transition-delay:0.19s">
+            <div class="wi-num">03</div>
+            <div class="wi-body"><h4>Multi-Platform Presence</h4><p>Diversification across Amazon, TikTok Shop, and Walmart reduces platform dependency risk and unlocks multiple revenue streams simultaneously.</p></div>
+          </div>
+          <div class="why-item r-up" style="transition-delay:0.26s">
+            <div class="wi-num">04</div>
+            <div class="wi-body"><h4>Enterprise-Grade Operations</h4><p>We run with the processes, systems, and talent standards of enterprise companies — applied to the agility of a growth-focused accelerator.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="why-right r-right">
+        <div class="why-cta-block">
+          <h3 class="heading-md">Ready to accelerate your ecommerce growth?</h3>
+          <a href="#cta" class="btn btn-navy">Start the Conversation →</a>
+        </div>
+        <div class="why-stat-row">
+          <div class="wsr-cell">
+            <span class="wsr-num">5</span>
+            <span class="wsr-lbl">Divisions</span>
+          </div>
+          <div class="wsr-cell">
+            <span class="wsr-num">3</span>
+            <span class="wsr-lbl">Platforms</span>
+          </div>
+          <div class="wsr-cell">
+            <span class="wsr-num">360°</span>
+            <span class="wsr-lbl">Coverage</span>
+          </div>
+          <div class="wsr-cell">
+            <span class="wsr-num">1</span>
+            <span class="wsr-lbl">Ecosystem</span>
+          </div>
+        </div>
+        <div class="why-quote-block">
+          <p class="why-quote-text">"When distribution, sourcing, talent, logistics, and brand strategy all speak the same language — that's when ecommerce becomes unstoppable."</p>
+          <p class="why-quote-attr">— Founder &amp; CEO, Viral Vamp</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOUNDER ───────────────────────────────────────────────── -->
+<section id="founder">
+  <div class="container">
+    <div class="founder-grid">
+      <div class="founder-text r-left">
+        <div class="eyebrow eyebrow-blue"><span class="eyebrow-line"></span>The Visionary</div>
+        <h2 class="heading-lg">A Founder Built<br><span class="blue-word">For This Moment</span></h2>
+        <div class="founder-divider"></div>
+        <p class="founder-body">Viral Vamp was founded with a singular conviction: that ecommerce is the greatest wealth-building opportunity of our generation — and that most sellers are leaving enormous value on the table by operating in silos.</p>
+        <p class="founder-body">With deep roots in ecommerce operations, supply chain strategy, and digital marketplace growth, our founder built Viral Vamp to be the infrastructure layer that ambitious sellers, operators, and brands have always needed — but never had access to under one roof.</p>
+        <div class="founder-blockquote">
+          <p>"I built Viral Vamp because I saw sellers working hard in isolation while the real opportunity was in connecting the dots. When you control distribution, sourcing, logistics, talent, and brand — you don't just compete. You dominate."</p>
+        </div>
+        <div class="founder-byline">
+          <div class="byline-dash"></div>
+          <div>
+            <div class="byline-name">Founder &amp; CEO, Viral Vamp</div>
+            <div class="byline-role">Ecommerce Accelerator &amp; Parent Company</div>
+          </div>
+        </div>
+      </div>
+      <div class="founder-img-wrap r-right">
+        <div class="founder-img-block">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.5">
+            <circle cx="32" cy="22" r="12"/>
+            <path d="M10 57c0-12.15 9.85-22 22-22s22 9.85 22 22"/>
+          </svg>
+          <span class="founder-img-label">Replace with founder photo</span>
+        </div>
+        <div class="founder-badge-card">
+          <strong>CEO</strong>
+          <span>Founder &amp; Visionary</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ───────────────────────────────────────────────────── -->
+<section id="cta">
+  <div class="container">
+    <div class="cta-inner">
+      <h2 class="cta-heading r-left">Let's Build Your<br>Ecommerce Empire.</h2>
+      <div class="cta-right r-right">
+        <p class="cta-sub">Whether you're a brand looking to scale, a seller ready to systemize, or a partner wanting to grow — Viral Vamp has the infrastructure to take you there.</p>
+        <div class="cta-buttons">
+          <a href="mailto:hello@viralvamp.com" class="btn btn-navy">Contact Us Today →</a>
+          <a href="#divisions" class="btn btn-outline-white">Our Divisions</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-name">Viral Vamp<span class="logo-dot" style="width:7px;height:7px;"></span></div>
+        <p class="footer-desc">An ecommerce accelerator and parent company operating five elite divisions across Amazon, TikTok Shop, and Walmart.</p>
+        <div class="footer-socials">
+          <a href="#" class="fsoc" aria-label="LinkedIn">in</a>
+          <a href="#" class="fsoc" aria-label="X">𝕏</a>
+          <a href="#" class="fsoc" aria-label="Instagram">ig</a>
+          <a href="#" class="fsoc" aria-label="TikTok">tt</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Divisions</h5>
+        <ul>
+          <li><a href="#divisions">Distribution</a></li>
+          <li><a href="#divisions">Sourcing</a></li>
+          <li><a href="#divisions">VA Placement</a></li>
+          <li><a href="#divisions">3PL Logistics</a></li>
+          <li><a href="#divisions">Brand Management</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Platforms</h5>
+        <ul>
+          <li><a href="#platforms">Amazon</a></li>
+          <li><a href="#platforms">TikTok Shop</a></li>
+          <li><a href="#platforms">Walmart</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#founder">Founder</a></li>
+          <li><a href="#cta">Contact</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Viral Vamp. All rights reserved.</p>
+      <p>Built for ecommerce dominance.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ─── SCRIPTS ───────────────────────────────────────────────── -->
+<script>
+  /* Nav scroll */
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40), {passive:true});
+
+  /* Hamburger */
+  const hb  = document.getElementById('hamburger');
+  const nls = document.getElementById('navLinks');
+  hb.addEventListener('click', () => nls.classList.toggle('open'));
+  nls.querySelectorAll('a').forEach(a => a.addEventListener('click', () => nls.classList.remove('open')));
+
+  /* Scroll reveal */
+  const revealEls = document.querySelectorAll('.r-up, .r-left, .r-right, .r-fade');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => io.observe(el));
+
+  /* Hover highlight on division cards */
+  document.querySelectorAll('.div-card').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      document.querySelectorAll('.div-card').forEach(c => { if (c !== card) c.style.opacity = '0.6'; });
+    });
+    card.addEventListener('mouseleave', () => {
+      document.querySelectorAll('.div-card').forEach(c => c.style.opacity = '1');
+    });
+  });
+
+  /* Parallax on hero text */
+  const heroH1 = document.querySelector('.hero-h1');
+  window.addEventListener('scroll', () => {
+    const sy = window.scrollY;
+    if (sy < window.innerHeight * 1.2 && heroH1) {
+      heroH1.style.transform = `translateY(${sy * 0.12}px)`;
+      heroH1.style.opacity   = Math.max(0, 1 - sy / (window.innerHeight * 0.6));
+    }
+  }, {passive:true});
+</script>
+</body>
+</html>
